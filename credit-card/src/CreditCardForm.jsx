@@ -17,6 +17,11 @@ const CustomSelect = ({
   dataRef,
 }) => {
   const [open, setOpen] = useState(false);
+
+  // DROPDOWN CLOSE: true while the menu plays its close animation.
+  // The menu stays on the page until the animation ends.
+  const [isClosing, setIsClosing] = useState(false);
+
   const selectRef = useRef(null);
 
   useEffect(() => {
@@ -27,6 +32,7 @@ const CustomSelect = ({
     const handleClickOutside = (event) => {
       if (selectRef.current && !selectRef.current.contains(event.target)) {
         setOpen(false);
+        setIsClosing(true); // DROPDOWN CLOSE: play the close animation
         onBlurCard?.();
       }
     };
@@ -40,6 +46,7 @@ const CustomSelect = ({
     // Side effects should not run inside the setOpen updater.
     const next = !open;
     setOpen(next);
+    setIsClosing(!next); // DROPDOWN CLOSE: closing → animate, opening → stop any close
 
     if (next) {
       onFocusCard?.({
@@ -57,6 +64,7 @@ const CustomSelect = ({
   const handleSelect = (optionValue) => {
     onChange(optionValue);
     setOpen(false);
+    setIsClosing(true); // DROPDOWN CLOSE: play the close animation
     onBlurCard?.();
   };
 
@@ -78,8 +86,15 @@ const CustomSelect = ({
         <span className={`custom-select__arrow ${open ? "is-open" : ""}`}>⌄</span>
       </button>
 
-      {open && (
-        <div className="custom-select__menu">
+      {/* DROPDOWN CLOSE: show the menu while open OR while closing.
+          When the close animation ends, remove it from the page. */}
+      {(open || isClosing) && (
+        <div
+          className={`custom-select__menu ${isClosing ? "is-closing" : ""}`}
+          onAnimationEnd={() => {
+            if (isClosing) setIsClosing(false);
+          }}
+        >
           {options.map((option) => (
             <button
               type="button"

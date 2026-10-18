@@ -900,3 +900,35 @@ select.card-input__input {
     animation: none;
   }
 }
+
+/* =========================================================
+   DROPDOWN CLOSE
+   The menu opens with "dropdownFadeUp" (already above).
+   Now it also closes with "dropdownFadeDown".
+   pointer-events: none stops clicks on a menu that is leaving.
+   ========================================================= */
+.custom-select__menu.is-closing {
+  animation: dropdownFadeDown 0.18s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes dropdownFadeDown {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+/* Reduced motion: make it almost instant, but not "none".
+   With "none", the animationend event never fires,
+   and the menu would never leave the page. */
+@media (prefers-reduced-motion: reduce) {
+  .custom-select__menu,
+  .custom-select__menu.is-closing {
+    animation-duration: 0.01ms;
+  }
+}
