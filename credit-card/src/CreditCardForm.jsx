@@ -15,6 +15,10 @@ const CustomSelect = ({
   const selectRef = useRef(null);
 
   useEffect(() => {
+    // FIX: only listen for outside clicks while the menu is open.
+    // Before, every click on the page ran this, even with the menu closed.
+    if (!open) return;
+
     const handleClickOutside = (event) => {
       if (selectRef.current && !selectRef.current.contains(event.target)) {
         setOpen(false);
@@ -24,24 +28,25 @@ const CustomSelect = ({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onBlurCard]);
+  }, [open, onBlurCard]);
 
   const handleToggle = () => {
-    setOpen((prev) => {
-      const next = !prev;
-      if (next) {
-        onFocusCard?.({
-          target: {
-            dataset: {
-              ref: dataRef,
-            },
+    // FIX: decide "next" first, then call the card functions.
+    // Side effects should not run inside the setOpen updater.
+    const next = !open;
+    setOpen(next);
+
+    if (next) {
+      onFocusCard?.({
+        target: {
+          dataset: {
+            ref: dataRef,
           },
-        });
-      } else {
-        onBlurCard?.();
-      }
-      return next;
-    });
+        },
+      });
+    } else {
+      onBlurCard?.();
+    }
   };
 
   const handleSelect = (optionValue) => {
@@ -96,7 +101,10 @@ const CreditCardForm = () => {
   const [cardCvv, setCardCvv] = useState("");
   const [isCardFlipped, setIsCardFlipped] = useState(false);
   const [focusElementStyle, setFocusElementStyle] = useState(null);
-  const [isInputFocused, setIsInputFocused] = useState(false);
+
+  // FIX: keep the hide-timer in a ref instead of an isInputFocused state.
+  // A ref always has the latest value, so the timer never reads old data.
+  const blurTimeoutRef = useRef(null);
 
   const minCardYear = new Date().getFullYear();
   const amexCardMask = "#### ###### #####";
@@ -112,6 +120,9 @@ const CreditCardForm = () => {
 
   useEffect(() => {
     cardNumberInputRef.current?.focus();
+
+    // Clear any waiting timer when the component closes.
+    return () => clearTimeout(blurTimeoutRef.current);
   }, []);
 
   const cleanCardNumber = useMemo(() => {
@@ -162,7 +173,9 @@ const CreditCardForm = () => {
   };
 
   const focusInput = (e) => {
-    setIsInputFocused(true);
+    // FIX: a new field got focus, so cancel any hide that is waiting.
+    clearTimeout(blurTimeoutRef.current);
+
     const targetRefName = e.target.dataset.ref;
     const target = getTargetRef(targetRefName);
 
@@ -176,13 +189,12 @@ const CreditCardForm = () => {
   };
 
   const blurInput = () => {
-    setTimeout(() => {
-      if (!isInputFocused) {
-        setFocusElementStyle(null);
-      }
+    // FIX: wait 200ms, then hide the box.
+    // If the user focuses another field before that, focusInput cancels this timer.
+    clearTimeout(blurTimeoutRef.current);
+    blurTimeoutRef.current = setTimeout(() => {
+      setFocusElementStyle(null);
     }, 200);
-
-    setIsInputFocused(false);
   };
 
   const formatCardNumber = (value) => {
