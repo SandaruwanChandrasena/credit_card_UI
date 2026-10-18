@@ -227,8 +227,7 @@ body {
   box-shadow: 0 25px 50px rgba(15, 23, 42, 0.28);
   transform: rotateY(0deg);
   transform-style: preserve-3d;
-  transition:
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.4s ease;
   backface-visibility: hidden;
   height: 100%;
@@ -931,5 +930,81 @@ select.card-input__input {
   .custom-select__menu,
   .custom-select__menu.is-closing {
     animation-duration: 0.01ms;
+  }
+}
+
+/* =========================================================
+   PAGE LOAD ANIMATION
+   1. The card fades in and grows a little.
+   2. The white form slides down from under the card.
+   3. The inputs fade in one by one.
+   "backwards" keeps the start state during the delay,
+   so nothing flashes before its animation begins.
+   After the animation ends, the transform is removed,
+   so it can't affect the dropdown menus later.
+   ========================================================= */
+
+/* 1. Card. We animate .card-list (the wrapper), not .card-item,
+      so we don't break the 3D flip transform on the card. */
+.card-list {
+  animation: cardEnter 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* 2. White form. It sits behind the card (the card has z-index: 2),
+      so when it starts higher up, it is hidden under the card. */
+.card-form__inner {
+  animation: formSlideDown 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+}
+
+/* 3. Inputs and button, one after another */
+.card-form__inner > * {
+  animation: fadeUpSoft 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+.card-form__inner > *:nth-child(1) { animation-delay: 1.0s; }
+.card-form__inner > *:nth-child(2) { animation-delay: 1.12s; }
+.card-form__inner > *:nth-child(3) { animation-delay: 1.24s; }
+.card-form__inner > *:nth-child(4) { animation-delay: 1.36s; }
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes formSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-140px);
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUpSoft {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-list,
+  .card-form__inner,
+  .card-form__inner > * {
+    animation: none;
   }
 }
