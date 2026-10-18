@@ -80,10 +80,16 @@ const CustomSelect = ({
         className={`custom-select__trigger ${open ? "is-open" : ""}`}
         onClick={handleToggle}
       >
-        <span className={value ? "custom-select__value" : "custom-select__placeholder"}>
+        <span
+          className={
+            value ? "custom-select__value" : "custom-select__placeholder"
+          }
+        >
           {selectedLabel}
         </span>
-        <span className={`custom-select__arrow ${open ? "is-open" : ""}`}>⌄</span>
+        <span className={`custom-select__arrow ${open ? "is-open" : ""}`}>
+          ⌄
+        </span>
       </button>
 
       {/* DROPDOWN CLOSE: show the menu while open OR while closing.
@@ -135,8 +141,11 @@ const CreditCardForm = () => {
   const cardDateRef = useRef(null);
   const cardNumberInputRef = useRef(null);
 
+  // FAST LOAD: the card is at most 430px wide.
+  // 860px is enough for sharp screens (2x), and much smaller than 1200px.
+  // This link must match the preload link in index.html.
   const cardBackground =
-    "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1200&q=80";
+    "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=860&q=80";
 
   useEffect(() => {
     cardNumberInputRef.current?.focus();
@@ -189,7 +198,7 @@ const CreditCardForm = () => {
     (year) => ({
       value: `${year}`,
       label: `${year}`,
-    })
+    }),
   );
 
   const getTargetRef = (refName) => {

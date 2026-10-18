@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600,700|Source+Sans+Pro:400,600,700&display=swap");
+/* FAST LOAD: the Google Fonts link moved to index.html (it loads sooner there). */
 
 body {
   margin: 0;
@@ -227,7 +227,8 @@ body {
   box-shadow: 0 25px 50px rgba(15, 23, 42, 0.28);
   transform: rotateY(0deg);
   transform-style: preserve-3d;
-  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+  transition:
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.4s ease;
   backface-visibility: hidden;
   height: 100%;

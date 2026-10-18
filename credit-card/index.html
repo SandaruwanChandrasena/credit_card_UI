@@ -5,6 +5,31 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>credit-card</title>
+
+    <!-- FAST LOAD: open the connections to these servers early -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+
+    <!-- FAST LOAD: fonts load here now (before, they were an @import in the CSS) -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600,700|Source+Sans+Pro:400,600,700&display=swap"
+    />
+
+    <!-- FAST LOAD: start downloading the card images before React runs.
+         These links must match the ones in CreditCardForm.jsx. -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=860&q=80"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/chip.png"
+    />
   </head>
   <body>
     <div id="root"></div>
