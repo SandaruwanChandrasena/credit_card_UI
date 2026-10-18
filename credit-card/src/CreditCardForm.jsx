@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./CreditCardForm.css";
 
+// LOGO FADE: one place for the image link, and a list of all card types.
+const CARD_IMAGES_URL =
+  "https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images";
+const CARD_TYPES = ["visa", "amex", "mastercard", "discover", "troy"];
+
 const CustomSelect = ({
   label,
   value,
@@ -120,6 +125,13 @@ const CreditCardForm = () => {
 
   useEffect(() => {
     cardNumberInputRef.current?.focus();
+
+    // LOGO FADE: download all card logos at the start.
+    // Then a logo change shows at once, with no empty gap while it loads.
+    CARD_TYPES.forEach((type) => {
+      const img = new Image();
+      img.src = `${CARD_IMAGES_URL}/${type}.png`;
+    });
 
     // Clear any waiting timer when the component closes.
     return () => clearTimeout(blurTimeoutRef.current);
@@ -278,14 +290,15 @@ const CreditCardForm = () => {
               <div className="card-item__wrapper">
                 <div className="card-item__top">
                   <img
-                    src="https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/chip.png"
+                    src={`${CARD_IMAGES_URL}/chip.png`}
                     className="card-item__chip"
                     alt="Chip"
                   />
 
                   <div className="card-item__type">
                     <img
-                      src={`https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/${getCardType}.png`}
+                      key={getCardType}
+                      src={`${CARD_IMAGES_URL}/${getCardType}.png`}
                       alt={getCardType}
                       className="card-item__typeImg"
                     />
@@ -367,7 +380,8 @@ const CreditCardForm = () => {
 
                 <div className="card-item__type">
                   <img
-                    src={`https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images/${getCardType}.png`}
+                    key={getCardType}
+                    src={`${CARD_IMAGES_URL}/${getCardType}.png`}
                     alt={getCardType}
                     className="card-item__typeImg"
                   />
