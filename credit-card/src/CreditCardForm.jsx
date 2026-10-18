@@ -237,27 +237,20 @@ const CreditCardForm = () => {
           ? index > 4 && index < 14 && currentChar && char.trim() !== ""
           : index > 4 && index < 15 && currentChar && char.trim() !== "";
 
+      // What to show in this slot: "*", the typed digit, or the "#" mask.
+      const shown = shouldMask ? "*" : currentChar || char;
+      const isSpace = char.trim() === "";
+
       return (
         <span key={index}>
-          {shouldMask ? (
-            <div className="card-item__numberItem">*</div>
-          ) : currentChar ? (
-            <div
-              className={`card-item__numberItem ${
-                char.trim() === "" ? "-active" : ""
-              }`}
-            >
-              {currentChar}
-            </div>
-          ) : (
-            <div
-              className={`card-item__numberItem ${
-                char.trim() === "" ? "-active" : ""
-              }`}
-            >
-              {char}
-            </div>
-          )}
+          {/* ANIMATION: the key changes when the shown text changes.
+              React then makes a new div, so the CSS animation plays again. */}
+          <div
+            key={`${index}-${shown}`}
+            className={`card-item__numberItem ${isSpace ? "-active" : ""}`}
+          >
+            {shown}
+          </div>
         </span>
       );
     });
@@ -315,20 +308,38 @@ const CreditCardForm = () => {
                   >
                     <div className="card-item__holder">Card Holder</div>
                     <div className="card-item__name">
-                      {cardName.length
-                        ? cardName.replace(/\s\s+/g, " ")
-                        : "FULL NAME"}
+                      {/* ANIMATION: one span per letter, so each new letter slides in. */}
+                      {cardName.length ? (
+                        cardName
+                          .replace(/\s\s+/g, " ")
+                          .split("")
+                          .map((letter, index) => (
+                            <span
+                              key={`${index}-${letter}`}
+                              className="card-item__nameItem"
+                            >
+                              {letter === " " ? " " : letter}
+                            </span>
+                          ))
+                      ) : (
+                        <span key="placeholder" className="card-item__nameItem">
+                          FULL NAME
+                        </span>
+                      )}
                     </div>
                   </label>
 
                   <div className="card-item__date" ref={cardDateRef}>
                     <label className="card-item__dateTitle">Expires</label>
                     <label className="card-item__dateItem">
-                      <span>{cardMonth || "MM"}</span>
+                      {/* ANIMATION: new key when the month changes, so it slides in. */}
+                      <span key={cardMonth || "MM"}>{cardMonth || "MM"}</span>
                     </label>
                     /
                     <label className="card-item__dateItem">
-                      <span>{cardYear ? String(cardYear).slice(2, 4) : "YY"}</span>
+                      <span key={cardYear || "YY"}>
+                        {cardYear ? String(cardYear).slice(2, 4) : "YY"}
+                      </span>
                     </label>
                   </div>
                 </div>

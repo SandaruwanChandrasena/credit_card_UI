@@ -803,3 +803,73 @@ select.card-input__input {
     padding: 11px 12px;
   }
 }
+/* =========================================================
+   TYPING ANIMATIONS
+   We only animate "opacity" and "transform".
+   The browser can do these fast, so they stay smooth.
+   ========================================================= */
+
+/* Card number digits slide up and fade in */
+.card-item__numberItem {
+  animation: slideFadeUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Name letters slide in from the right */
+.card-item__nameItem {
+  animation: slideFadeRight 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Month and year slide up */
+.card-item__dateItem span {
+  animation: slideFadeUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* CVV stars pop in */
+.card-item__cvvBand span {
+  display: inline-block;
+  animation: popIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes slideFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideFadeRight {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Some people turn off motion in their system settings.
+   Respect that and skip the animations. */
+@media (prefers-reduced-motion: reduce) {
+  .card-item__numberItem,
+  .card-item__nameItem,
+  .card-item__dateItem span,
+  .card-item__cvvBand span {
+    animation: none;
+  }
+}
