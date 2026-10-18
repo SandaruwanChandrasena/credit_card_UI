@@ -6,6 +6,9 @@ const CARD_IMAGES_URL =
   "https://raw.githubusercontent.com/muhammederdem/credit-card-form/master/src/assets/images";
 const CARD_TYPES = ["visa", "amex", "mastercard", "discover", "troy"];
 
+// NAME LIMIT: the longest card holder name we allow.
+const MAX_NAME_LENGTH = 26;
+
 const CustomSelect = ({
   label,
   value,
@@ -80,16 +83,10 @@ const CustomSelect = ({
         className={`custom-select__trigger ${open ? "is-open" : ""}`}
         onClick={handleToggle}
       >
-        <span
-          className={
-            value ? "custom-select__value" : "custom-select__placeholder"
-          }
-        >
+        <span className={value ? "custom-select__value" : "custom-select__placeholder"}>
           {selectedLabel}
         </span>
-        <span className={`custom-select__arrow ${open ? "is-open" : ""}`}>
-          ⌄
-        </span>
+        <span className={`custom-select__arrow ${open ? "is-open" : ""}`}>⌄</span>
       </button>
 
       {/* DROPDOWN CLOSE: show the menu while open OR while closing.
@@ -198,7 +195,7 @@ const CreditCardForm = () => {
     (year) => ({
       value: `${year}`,
       label: `${year}`,
-    }),
+    })
   );
 
   const getTargetRef = (refName) => {
@@ -254,7 +251,13 @@ const CreditCardForm = () => {
   };
 
   const handleCardNameChange = (e) => {
-    setCardName(e.target.value.toUpperCase());
+    // NAME LIMIT: real cards allow about 26 characters (ISO/IEC 7813).
+    // Keep only letters, spaces, dot, apostrophe and hyphen.
+    const cleaned = e.target.value
+      .replace(/[^a-zA-Z\s.'-]/g, "")
+      .slice(0, MAX_NAME_LENGTH);
+
+    setCardName(cleaned.toUpperCase());
   };
 
   const handleCardCvvChange = (e) => {
@@ -448,6 +451,7 @@ const CreditCardForm = () => {
               onFocus={focusInput}
               onBlur={blurInput}
               data-ref="cardName"
+              maxLength={MAX_NAME_LENGTH}
               autoComplete="off"
               placeholder="JOHN DOE"
             />
